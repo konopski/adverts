@@ -2,9 +2,10 @@ package eu.konopski.adverts.web
 
 import eu.konopski.adverts.data.Adverts
 import eu.konopski.adverts.data.Adverts.Sort
-
 import org.json4s.prefs.EmptyValueStrategy
 import org.scalatra._
+
+import scala.util.Try
 
 // JSON-related libraries
 import org.json4s.{DefaultFormats, Formats}
@@ -37,7 +38,13 @@ class AdvertsServlet extends ScalatraServlet with JacksonJsonSupport {
 
   //  * have functionality to return data for single car advert by id;
   get("/adverts/:id") {
-    views.html.hello()
+    val ad = for {
+      idStr <- params.get("id")
+      id    <- Try(idStr.toInt).toOption
+      found <- Adverts.get(_.id == id)
+    } yield found
+    if(ad.isDefined) ad
+    else halt(404, "Not found")
   }
 
 //  * have functionality to modify car advert by id;
@@ -47,6 +54,11 @@ class AdvertsServlet extends ScalatraServlet with JacksonJsonSupport {
 
 //  * have functionality to delete car advert by id;
   delete("/adverts/:id") {
+    for {
+      idStr <- params.get("id")
+      id    <- Try(idStr.toInt).toOption
+      rm    <- Adverts.deleteWhere(_.id == id)
+    } yield rm
 
   }
 

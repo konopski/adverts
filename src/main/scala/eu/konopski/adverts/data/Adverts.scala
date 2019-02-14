@@ -10,6 +10,16 @@ object Adverts {
     sort.sort(all)
   }
 
+  def get(predicate: Advert => Boolean) = {
+    all.find(predicate)
+  }
+
+  def deleteWhere(predicate: Advert => Boolean) = {
+    val found = all.find(predicate)
+    all = all.filterNot(predicate)
+    found
+  }
+
   object Sort {
     val byId: Sort[Advert] = (adverts: List[Advert]) => adverts.sortBy(_.id)
     val byTitle: Sort[Advert] = (adverts: List[Advert]) => adverts.sortBy(_.title)
