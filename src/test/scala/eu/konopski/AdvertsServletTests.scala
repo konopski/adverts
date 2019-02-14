@@ -7,9 +7,9 @@ class AdvertsServletTests extends ScalatraFunSuite {
 
   addServlet(classOf[AdvertsServlet], "/*")
 
-  test("GET / on AdvertsServlet should return status 200") {
+  test("GET / on AdvertsServlet should redirect") {
     get("/") {
-      status should equal (200)
+      status should equal (302)
     }
   }
 
