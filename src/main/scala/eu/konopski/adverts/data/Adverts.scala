@@ -15,7 +15,7 @@ object Adverts {
     val byTitle: Sort[Advert] = (adverts: List[Advert]) => adverts.sortBy(_.title)
     val byPrice: Sort[Advert] = (adverts: List[Advert]) => adverts.sortBy(_.price)
     val byMileage: Sort[Advert] = (adverts: List[Advert]) => adverts.sortBy(a => a.mileage.getOrElse(0))
-    val byFirstRegistration: Sort[Advert] = (adverts: List[Advert]) => adverts.sortBy(_.firstRegistration.map(_.toEpochDay).getOrElse(0L))
+    val byFirstRegistration: Sort[Advert] = (adverts: List[Advert]) => adverts.sortBy(_.firstRegistration.map(_.getTime).getOrElse(0L))
 
     private def fromString(sortField: String): Sort[Advert] = Map(
       "id" -> byId,

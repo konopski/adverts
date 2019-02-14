@@ -2,10 +2,22 @@ package eu.konopski.adverts.web
 
 import eu.konopski.adverts.data.Adverts
 import eu.konopski.adverts.data.Adverts.Sort
+import org.json4s.prefs.EmptyValueStrategy
 import org.scalatra._
 
+// JSON-related libraries
+import org.json4s.{DefaultFormats, Formats}
 
-class AdvertsServlet extends ScalatraServlet {
+// JSON handling support from Scalatra
+import org.scalatra.json._
+
+class AdvertsServlet extends ScalatraServlet with JacksonJsonSupport {
+  protected implicit val jsonFormats: Formats =
+    DefaultFormats.withEmptyValueStrategy(EmptyValueStrategy.skip)
+
+  before() {
+    contentType = formats("json")
+  }
 
   get("/") {
     redirect("/adverts?sortBy=title")
