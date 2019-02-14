@@ -74,7 +74,27 @@ class AdvertsServlet extends ScalatraServlet with JacksonJsonSupport {
 
 //  * have functionality to modify car advert by id;
   put("/adverts/:id") {
-    halt(501, "Not implemeted yet ;) ")
+    val update = for {
+      id      <- (parsedBody \ "id").extractOpt[Int]       \/> BadRequest("id")
+      _       <- verifyIdMatchesPath(id)                   \/> BadRequest("param[id]!=id")
+      title   <- (parsedBody \ "title").extractOpt[String] \/> BadRequest("title")
+      fuel    <- (parsedBody \ "fuel").extractOpt[String]  \/> BadRequest("fuel")
+      price   <- (parsedBody \ "price").extractOpt[Int]    \/> BadRequest("price")
+      is_new  <- (parsedBody \ "new").extractOpt[Boolean]  \/> BadRequest("new")
+      mileage <- (parsedBody \ "mileage").extractOpt[Int]  \/> BadRequest("mileage")
+      regDate <- (parsedBody \ "firstRegistration").extractOpt[Date] \/> BadRequest("firstRegistration")
+    } yield Advert(id, title, Fuel(fuel), price, is_new, Some(mileage), Some(regDate))
+    update.map { advert =>
+      Adverts.update(advert) \/> NotFound("not found id:" + advert.id)
+    }
+    update
+  }
+
+  private def verifyIdMatchesPath(id: Int) = {
+    params.get("id") flatMap { idStr =>
+      if (id.toString == idStr) Some(id)
+      else None
+    }
   }
 
 //  * have functionality to delete car advert by id;

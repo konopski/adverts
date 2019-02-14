@@ -36,6 +36,15 @@ object Adverts {
     a
   }
 
+  def update(advert: Advert): Option[Advert] = {
+    if(all.exists(_.id == advert.id)) {
+      val others = all.filterNot(_.id == advert.id)
+      all = others :+ advert
+      Some(advert)
+    }
+    else None
+  }
+
 
   object Sort {
     val byId: Sort[Advert] = (adverts: List[Advert]) => adverts.sortBy(_.id)
