@@ -22,24 +22,39 @@ object Adverts {
     found
   }
 
-  def put(
+  private def put(a: Advert): Advert = {
+    synchronized(this) {
+      all = all :+ a
+    }
+    a
+  }
+
+  def putUsed(
            title: String,
            fuel: Fuel,
            price: Int,
-           is_new: Boolean,
            mileage: Some[Int],
            firstReg: Some[Date]): Advert = {
 
     val nextId = all.maxBy(_.id).id + 1
-    val a = Advert(nextId, title, fuel, price, is_new, mileage, firstReg)
-    all = all :+ a
-    a
+    put(Advert(nextId, title, fuel, price, is_new = false, mileage, firstReg))
+  }
+
+  def putNew(
+           title: String,
+           fuel: Fuel,
+           price: Int): Advert = {
+
+    val nextId = all.maxBy(_.id).id + 1
+    put(Advert(nextId, title, fuel, price, is_new = true, None, None))
   }
 
   def update(advert: Advert): Option[Advert] = {
     if(all.exists(_.id == advert.id)) {
       val others = all.filterNot(_.id == advert.id)
-      all = others :+ advert
+      synchronized(this) {
+        all = others :+ advert
+      }
       Some(advert)
     }
     else None

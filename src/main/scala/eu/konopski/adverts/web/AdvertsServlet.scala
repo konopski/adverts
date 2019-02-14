@@ -57,7 +57,8 @@ class AdvertsServlet extends ScalatraServlet with JacksonJsonSupport {
       mileage <- (parsedBody \ "mileage").extractOpt[Int]  \/> BadRequest("mileage")
       regDate <- (parsedBody \ "firstRegistration").extractOpt[Date] \/> BadRequest("firstRegistration")
     } yield Created(
-      Adverts.put(title, Fuel(fuel), price, is_new, Some(mileage), Some(regDate))
+        if (is_new) Adverts.putNew(title, Fuel(fuel), price)
+        else Adverts.putUsed(title, Fuel(fuel), price, Some(mileage), Some(regDate))
     )
   }
 
