@@ -33,7 +33,7 @@ class AdvertsServlet extends ScalatraServlet with JacksonJsonSupport {
 
   //  * have functionality to add car advert;
   post("/adverts") {
-
+    halt(501, "Not implemeted yet ;)")
   }
 
   //  * have functionality to return data for single car advert by id;
@@ -49,7 +49,7 @@ class AdvertsServlet extends ScalatraServlet with JacksonJsonSupport {
 
 //  * have functionality to modify car advert by id;
   put("/adverts/:id") {
-
+    halt(501, "Not implemeted yet ;) ")
   }
 
 //  * have functionality to delete car advert by id;
