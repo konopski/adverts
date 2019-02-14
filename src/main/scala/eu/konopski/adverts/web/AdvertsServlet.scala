@@ -1,5 +1,7 @@
 package eu.konopski.adverts.web
 
+import eu.konopski.adverts.data.Adverts
+import eu.konopski.adverts.data.Adverts.Sort
 import org.scalatra._
 
 
@@ -12,7 +14,7 @@ class AdvertsServlet extends ScalatraServlet {
 //  * have functionality to return list of all car adverts;
 //  * optional sorting by any field specified by query parameter, default sorting - by **id**;
   get("/adverts") {
-
+    Adverts.getAll(Sort.of(params.get("sortBy")))
   }
 
   //  * have functionality to add car advert;
