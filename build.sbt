@@ -11,6 +11,7 @@ scalaVersion := "2.12.8"
 resolvers += Classpaths.typesafeReleases
 
 libraryDependencies ++= Seq(
+  "org.scalaz" %% "scalaz-core" % "7.2.27",
   "org.scalatra" %% "scalatra" % ScalatraVersion,
   "org.scalatra" %% "scalatra-scalatest" % ScalatraVersion % "test",
   "org.scalatra" %% "scalatra-json" % ScalatraVersion,

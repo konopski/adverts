@@ -1,6 +1,8 @@
 package eu.konopski.adverts.data
 
-import eu.konopski.adverts.domain.Advert
+import java.util.Date
+
+import eu.konopski.adverts.domain.{Advert, Fuel}
 
 object Adverts {
 
@@ -19,6 +21,21 @@ object Adverts {
     all = all.filterNot(predicate)
     found
   }
+
+  def put(
+           title: String,
+           fuel: Fuel,
+           price: Int,
+           is_new: Boolean,
+           mileage: Some[Int],
+           firstReg: Some[Date]): Advert = {
+
+    val nextId = all.maxBy(_.id).id + 1
+    val a = Advert(nextId, title, fuel, price, is_new, mileage, firstReg)
+    all = all :+ a
+    a
+  }
+
 
   object Sort {
     val byId: Sort[Advert] = (adverts: List[Advert]) => adverts.sortBy(_.id)

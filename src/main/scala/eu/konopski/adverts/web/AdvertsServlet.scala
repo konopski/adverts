@@ -1,9 +1,15 @@
 package eu.konopski.adverts.web
 
+
+import java.util.Date
+
 import eu.konopski.adverts.data.Adverts
 import eu.konopski.adverts.data.Adverts.Sort
+import eu.konopski.adverts.domain.{Advert, Fuel}
 import org.json4s.prefs.EmptyValueStrategy
 import org.scalatra._
+import scalaz._
+import scalaz.syntax.std.option._
 
 import scala.util.Try
 
@@ -21,6 +27,12 @@ class AdvertsServlet extends ScalatraServlet with JacksonJsonSupport {
     contentType = formats("json")
   }
 
+  override def renderPipeline: RenderPipeline = ({
+    case \/-(right) => right
+    case -\/(left) => left
+  }: RenderPipeline) orElse super.renderPipeline
+
+
   get("/") {
     redirect("/adverts?sortBy=title")
   }
@@ -33,7 +45,16 @@ class AdvertsServlet extends ScalatraServlet with JacksonJsonSupport {
 
   //  * have functionality to add car advert;
   post("/adverts") {
-    halt(501, "Not implemeted yet ;)")
+    for {
+      title   <- (parsedBody \ "title").extractOpt[String] \/> BadRequest("title")
+      fuel    <- (parsedBody \ "fuel").extractOpt[String]  \/> BadRequest("fuel")
+      price   <- (parsedBody \ "price").extractOpt[Int]    \/> BadRequest("price")
+      is_new  <- (parsedBody \ "new").extractOpt[Boolean]  \/> BadRequest("new")
+      mileage <- (parsedBody \ "mileage").extractOpt[Int]  \/> BadRequest("mileage")
+      regDate <- (parsedBody \ "firstRegistration").extractOpt[Date] \/> BadRequest("firstRegistration")
+    } yield Created(
+      Adverts.put(title, Fuel(fuel), price, is_new, Some(mileage), Some(regDate))
+    )
   }
 
   //  * have functionality to return data for single car advert by id;
