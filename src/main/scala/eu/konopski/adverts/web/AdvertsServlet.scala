@@ -54,11 +54,11 @@ class AdvertsServlet extends ScalatraServlet with JacksonJsonSupport {
       fuel    <- (parsedBody \ "fuel").extractOpt[String]  \/> BadRequest("fuel")
       price   <- (parsedBody \ "price").extractOpt[Int]    \/> BadRequest("price")
       is_new  <- (parsedBody \ "new").extractOpt[Boolean]  \/> BadRequest("new")
-      mileage <- (parsedBody \ "mileage").extractOpt[Int]  \/> BadRequest("mileage")
-      regDate <- (parsedBody \ "firstRegistration").extractOpt[Date] \/> BadRequest("firstRegistration")
+      mileage <- extractMileageForUsed(is_new)             \/> BadRequest("mileage")
+      regDate <- extractFirstRegistrationForUsed(is_new)   \/> BadRequest("firstRegistration")
     } yield Created(
         if (is_new) Adverts.putNew(title, Fuel(fuel), price)
-        else Adverts.putUsed(title, Fuel(fuel), price, Some(mileage), Some(regDate))
+        else Adverts.putUsed(title, Fuel(fuel), price, mileage, regDate)
     )
   }
 
@@ -82,13 +82,27 @@ class AdvertsServlet extends ScalatraServlet with JacksonJsonSupport {
       fuel    <- (parsedBody \ "fuel").extractOpt[String]  \/> BadRequest("fuel")
       price   <- (parsedBody \ "price").extractOpt[Int]    \/> BadRequest("price")
       is_new  <- (parsedBody \ "new").extractOpt[Boolean]  \/> BadRequest("new")
-      mileage <- (parsedBody \ "mileage").extractOpt[Int]  \/> BadRequest("mileage")
-      regDate <- (parsedBody \ "firstRegistration").extractOpt[Date] \/> BadRequest("firstRegistration")
-    } yield Advert(id, title, Fuel(fuel), price, is_new, Some(mileage), Some(regDate))
+      mileage <- extractMileageForUsed(is_new)             \/> BadRequest("mileage")
+      regDate <- extractFirstRegistrationForUsed(is_new)   \/> BadRequest("firstRegistration")
+    } yield Advert(id, title, Fuel(fuel), price, is_new, mileage, regDate)
     update.map { advert =>
       Adverts.update(advert) \/> NotFound("not found id:" + advert.id)
     }
     update
+  }
+
+  private def extractFirstRegistrationForUsed(is_new: Boolean) =
+    extractValid((parsedBody \ "firstRegistration").extractOpt[Date], is_new)
+
+  private def extractMileageForUsed(is_new: Boolean) =
+    extractValid((parsedBody \ "mileage").extractOpt[Int], is_new)
+
+  private def extractValid[T](received: Option[T], is_new: Boolean) = {
+    if (is_new) {
+      if (received.isEmpty) Some(None)
+      else None
+    }
+    else received map { Some(_) }
   }
 
   private def verifyIdMatchesPath(id: Int) = {

@@ -23,7 +23,7 @@ object Adverts {
   }
 
   private def put(a: Advert): Advert = {
-    synchronized(this) {
+    synchronized {
       all = all :+ a
     }
     a
@@ -33,8 +33,8 @@ object Adverts {
            title: String,
            fuel: Fuel,
            price: Int,
-           mileage: Some[Int],
-           firstReg: Some[Date]): Advert = {
+           mileage: Option[Int],
+           firstReg: Option[Date]): Advert = {
 
     val nextId = all.maxBy(_.id).id + 1
     put(Advert(nextId, title, fuel, price, is_new = false, mileage, firstReg))
@@ -52,7 +52,7 @@ object Adverts {
   def update(advert: Advert): Option[Advert] = {
     if(all.exists(_.id == advert.id)) {
       val others = all.filterNot(_.id == advert.id)
-      synchronized(this) {
+      synchronized {
         all = others :+ advert
       }
       Some(advert)
