@@ -4,7 +4,7 @@ import eu.konopski.adverts.domain.Advert
 
 object Adverts {
 
-  var all = List(Fakes.audi, Fakes.polonaise, Fakes.volvo)
+  var all = List(Fakes.audi, Fakes.polonaise, Fakes.volvo, Fakes.siren)
 
   def getAll(sort: Sort[Advert]): List[Advert] = {
     sort.sort(all)

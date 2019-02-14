@@ -1,5 +1,8 @@
 package eu.konopski.adverts.domain
 
-sealed abstract class Fuel(name: String)
-case object Gasoline extends Fuel("gasoline")
-case object Diesel extends Fuel("diesel")
+case class Fuel(name: String)
+
+object Fuel {
+  val gasoline = Fuel("gasoline")
+  val diesel = Fuel("diesel")
+}

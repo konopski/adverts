@@ -2,6 +2,9 @@ package eu.konopski.adverts.web
 
 import eu.konopski.adverts.data.Adverts
 import eu.konopski.adverts.data.Adverts.Sort
+import eu.konopski.adverts.domain.Fuel
+
+import org.json4s._
 import org.json4s.prefs.EmptyValueStrategy
 import org.scalatra._
 
@@ -13,7 +16,7 @@ import org.scalatra.json._
 
 class AdvertsServlet extends ScalatraServlet with JacksonJsonSupport {
   protected implicit val jsonFormats: Formats =
-    DefaultFormats.withEmptyValueStrategy(EmptyValueStrategy.skip)
+    DefaultFormats.withEmptyValueStrategy(EmptyValueStrategy.skip) + new FieldSerializer[Fuel]()
 
   before() {
     contentType = formats("json")
